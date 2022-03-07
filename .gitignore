@@ -1,3 +1,5 @@
 /vendor/
 /tests/cache/*
 .git
+composer.lock
+.phpunit.cache/
