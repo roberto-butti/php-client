@@ -33,4 +33,14 @@ final class ClientRetryTest extends TestCase
             $this->client->getCode()
         );
     }
+    public function testMaxRetry(): void
+    {
+        $this->expectException(GuzzleHttp\Exception\ServerException::class);
+        $this->client->setMaxRetries(2)->getStories();
+        
+        $this->assertEquals(
+            503,
+            $this->client->getCode()
+        );
+    }
 }
