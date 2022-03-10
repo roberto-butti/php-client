@@ -7,6 +7,7 @@ use GuzzleHttp\RequestOptions;
 use GuzzleHttp\Exception\ConnectException;
 use GuzzleHttp\Exception\TransferException;
 use GuzzleHttp\Handler\CurlHandler;
+use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Middleware;
 
@@ -73,6 +74,26 @@ class BaseClient
             'base_uri'=> $this->generateEndpoint($apiEndpoint, $apiVersion, $ssl, $apiRegion),
             'handler' => $handlerStack
         ]);
+        
+    }
+
+    public function mockable(array $mocks)
+    {
+        $handlerStack = HandlerStack::create(new MockHandler($mocks));
+        $handlerStack->push(Middleware::retry($this->retryDecider(), $this->retryDelay()));
+    /*
+        $this->client = new Guzzle([
+            'base_uri'=> $this->generateEndpoint($apiEndpoint, $apiVersion, $ssl, $apiRegion),
+            'handler' => $handlerStack
+        ]);
+        */
+        //$baseUri = $this->client->getConfig('base_uri');
+        $this->client = new Guzzle([
+            'base_uri'=> "http://api.storyblok.com/v2/cdn/",
+            'handler' => $handlerStack
+        ]);
+
+        
     }
 
     public function retryDecider()
@@ -211,7 +232,7 @@ class BaseClient
     public function get($endpointUrl, $queryString = array())
     {
         try {
-            $query = http_build_query($queryString, null, '&');
+            $query = http_build_query($queryString, "", '&');
             $string = preg_replace('/%5B(?:[0-9]|[1-9][0-9]+)%5D=/', '=', $query);
             $string = preg_replace('/%5B__or%5D%5B\d+%5D%/', '%5B__or%5D%5B%5D%', $string);
             $requestOptions = [RequestOptions::QUERY => $string];

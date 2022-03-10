@@ -443,7 +443,7 @@ class Client extends BaseClient
             }
 
             $response = $this->get($endpointUrl, $options);
-
+            
             $this->_save($response, $cachekey, $this->getVersion());
         }
 
@@ -697,6 +697,7 @@ class Client extends BaseClient
      */
     private function _assignState($response) {
         $this->responseBody = $response->httpResponseBody;
+        $this->responseCode = $response->httpResponseCode;
         $this->responseHeaders = $response->httpResponseHeaders;
     }
 

@@ -1,0 +1,56 @@
+# GithHub Actions Workflow generated with Ghygen
+# Original configuration: https://ghygen.hi-folks.dev?code=d53bebba75e640b985be293bb1661c01
+name: Test php client library with phpunit
+on:
+  push:
+    branches:
+      - feature/**
+
+jobs:
+  laravel-tests:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        operating-system: [ubuntu-latest]
+        php-versions: [ '8.1','8.0','7.4' ]
+        dependency-stability: [ 'prefer-none' ]
+
+    name: P${{ matrix.php-versions }} - L${{ matrix.laravel }} - ${{ matrix.dependency-stability }} - ${{ matrix.operating-system}}
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Install PHP versions
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: ${{ matrix.php-versions }}
+    - name: Install Dependencies
+      if: steps.vendor-cache.outputs.cache-hit != 'true'
+      run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
+
+    - name: Update Dependencies with latest stable
+      if: matrix.dependency-stability == 'prefer-stable'
+      run: composer update --prefer-stable
+    - name: Update Dependencies with lowest stable
+      if: matrix.dependency-stability == 'prefer-lowest'
+      run: composer update --prefer-stable --prefer-lowest
+
+
+    - name: Show dir
+      run: pwd
+    - name: PHP Version
+      run: php --version
+
+# Code quality
+    - name: Execute tests (Unit and Feature tests) via PHPUnit
+# Set environment
+      env:
+        SESSION_DRIVER: array
+
+      run: ./vendor/bin/phpunit tests --log-junit junit.xml
+
+    - name: Publish Unit Test Results
+      uses: EnricoMi/publish-unit-test-result-action/composite@v1
+      if: always()
+      with:
+        files: junit.xml
