@@ -55,7 +55,6 @@ final class BaseClientTest extends TestCase
     }
     public function testCallApi(): void
     {
-        
         $storyResponse = $this->client->getStories();
         $story= $storyResponse->getBody();
         $this->assertEquals(
@@ -70,9 +69,5 @@ final class BaseClientTest extends TestCase
         $this->assertIsArray($story);
         $this->assertCount(1, $story);
         $this->assertArrayHasKey("story", $story);
-
-
-
     }
-
 }

@@ -80,7 +80,7 @@ class BaseClient
     public function mockable(array $mocks)
     {
         $handlerStack = HandlerStack::create(new MockHandler($mocks));
-        $handlerStack->push(Middleware::retry($this->retryDecider(), $this->retryDelay()));
+        $handlerStack->push(Middleware::retry($this->retryDecider(), fn() => 0));
     /*
         $this->client = new Guzzle([
             'base_uri'=> $this->generateEndpoint($apiEndpoint, $apiVersion, $ssl, $apiRegion),
