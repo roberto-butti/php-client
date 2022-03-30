@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 use PHPUnit\Framework\TestCase;
 use Storyblok\BaseClient;
 use Storyblok\Client;
@@ -37,7 +39,7 @@ final class ClientRetryTest extends TestCase
     {
         $this->expectException(GuzzleHttp\Exception\ServerException::class);
         $this->client->setMaxRetries(2)->getStories();
-        
+
         $this->assertEquals(
             503,
             $this->client->getCode()

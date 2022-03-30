@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 use PHPUnit\Framework\TestCase;
 use Storyblok\BaseClient;
 use Storyblok\Client;
@@ -12,6 +14,11 @@ final class BaseClientTest extends TestCase
 
     protected function setUp(): void
     {
+        $this->makeMockClient();
+    }
+
+    protected function makeMockClient($ssl = false): void
+    {
         $content = file_get_contents("./tests/mock/stories.json");
         $mocks = [
             new Response(200, ['server' => 'nginx/1.18.0'], $content),
@@ -19,8 +26,9 @@ final class BaseClientTest extends TestCase
             new RequestException('Error Communicating with Server', new Request('GET', 'test'))
         ];
         $this->client = new Client('your-storyblok-private-token');
-        
+
         $this->client->mockable($mocks);
+
     }
 
     public function testCanBeInstanced(): void
@@ -69,5 +77,34 @@ final class BaseClientTest extends TestCase
         $this->assertIsArray($story);
         $this->assertCount(1, $story);
         $this->assertArrayHasKey("story", $story);
+    }
+    public function testProxy(): void
+    {
+        $proxy = "http://10.0.0.1";
+        $storyResponse = $this->client->setProxy($proxy)->getStories();
+        $this->assertEquals(
+            $proxy,
+            $this->client->getProxy()
+        );
+    }
+
+    public function testTimeout(): void
+    {
+        $timeout = 1;
+        $storyResponse = $this->client->setTimeout($timeout)->getStories();
+        $this->assertEquals(
+            $timeout,
+            $this->client->getTimeout()
+        );
+    }
+
+    public function testGenerateEndpoint(): void
+    {
+        $timeout = 1;
+        $storyResponse = $this->client->setTimeout($timeout)->getStories();
+        $this->assertEquals(
+            $timeout,
+            $this->client->getTimeout()
+        );
     }
 }

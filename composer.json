@@ -4,7 +4,7 @@
     "type": "library",
     "keywords": ["storyblok"],
     "license": "MIT",
-    "minimum-stability": "dev",
+    "//minimum-stability": "dev",
     "require": {
         "guzzlehttp/guzzle": "^6.2|^7.0",
         "apix/cache": "^1.2"
