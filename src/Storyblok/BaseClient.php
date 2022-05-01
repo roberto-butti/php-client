@@ -433,9 +433,11 @@ class BaseClient
     private function generateEndpoint($apiEndpoint, $apiVersion, $ssl, $apiRegion)
     {
         if ($this instanceof ManagementClient) {
-            $prefix = '';
+            $prefix = '/';
+        } elseif ($this instanceof GraphQLClient) {
+            $prefix = '/api';
         } else {
-            $prefix = '/cdn';
+            $prefix = '/cdn/';
         }
 
         if (!$ssl) {
@@ -449,7 +451,7 @@ class BaseClient
             $apiEndpoint = "api{$region}.storyblok.com";
         }
 
-        return $protocol . $apiEndpoint . '/' . $apiVersion . $prefix . '/';
+        return $protocol . $apiEndpoint . '/' . $apiVersion . $prefix;
     }
 
     private function enrichStories($data, $queryString)
