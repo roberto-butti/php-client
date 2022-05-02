@@ -58,7 +58,7 @@ class GraphQLClient extends BaseClient
 
     public function getPayloadQuery()
     {
-        return '{ ' . $this->query . ' }';
+        return '{' . PHP_EOL . '  ' . $this->query . '}';
     }
 
     /**
@@ -131,8 +131,7 @@ class GraphQLClient extends BaseClient
         }
 
         $this->query .= <<<'GQL'
-
-  Space {
+Space {
     id
     domain
     languageCodes
@@ -226,7 +225,7 @@ GQL;
             }
             $argString = '';
             if (\count($argStrings) > 0) {
-                $argString = '(' . implode(',', $argStrings) . ')';
+                $argString = '(' . implode(', ', $argStrings) . ')';
             }
             $contentType = ucfirst($this->items);
             $this->query .= <<<GQL
@@ -236,7 +235,7 @@ GQL;
                       name
                     }
                     total
-                }
+                  }
                 GQL;
         }
     }

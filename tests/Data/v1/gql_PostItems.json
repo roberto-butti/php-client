@@ -1,0 +1,17 @@
+{
+  "data": {
+    "PostItems": {
+      "items": [
+        {
+          "id": 129561780,
+          "name": "Arrow functions in PHP"
+        },
+        {
+          "id": 129561598,
+          "name": "Hello World"
+        }
+      ],
+      "total": 2
+    }
+  }
+}
