@@ -267,6 +267,68 @@ When using the CDN API V1, you can't resolve relationships of resolved entries a
 When using the CDN API V2 you can resolve also nested relationships in the resolved entries (just 2 levels deep), but the resolved entries are not injected in the fields, they are inserted in an array called `rels` which is in the root object. The resolved links will be placed in an array called `links`.
 In case you are using the API V2, to keep a consistent behaviour with the API V1, this client will inject the resolved entries and links inside the fields for you.
 
+## GraphQL Client
+
+With the PHP GraphQL Client you can integrate your PHP application with the Storyblok GraphQL APIs.
+
+For example, if you want to retrieve _'post'_ contents/stories (10 per page) and from the _'how-to'_ folder you can use _contents()_ method from _GraphQLClient_ class:
+```php 
+use Storyblok\GraphQLClient;
+
+$gqClient = new GraphQLClient($token);
+$stories = $gqClient
+    ->contents('post')
+    ->perPage(10)
+    ->folder('how-to/')
+    ->query()
+```
+If you want to retrieve the second page of 10 stories, you can use _page()_ method:
+
+```php 
+$stories = $gqClient
+    ->contents('post')
+    ->perPage(10)
+    ->page(2)
+    ->folder('how-to/')
+    ->query()
+
+```
+
+You can retrieve one specific content (story) with all components included via _contentById()_ method:
+
+```php
+$client = new \Storyblok\GraphQLClient($token);
+$story = $client
+  ->contentById("home")
+  ->query();
+```
+
+If you want to include also some other information, like the costs of the query execution you can chain also _costs()_ method:
+```php
+$client = new \Storyblok\GraphQLClient($token);
+$story = $client
+  ->contentById("home")
+  ->costs()
+  ->query();
+```
+
+You can retrieve a lot of information, chaining one or more method, for example: 3 stories from 'how-to' folder, with the list of language codes in the space, the space information and the cost of the query
+
+```php
+
+$client = new \Storyblok\GraphQLClient($token);
+// Retrieve 3 posts in the folder "how-to/
+// and retrieve some "space" information
+$infos = $client
+  ->contents("post")
+  ->folder("how-to/")
+  ->perPage(3)
+  ->space()
+  ->languageCodes()
+  ->costs()
+  ->query();
+  
+```
 ## Code Quality
 
 The package includes tools for tests and code formatting:
