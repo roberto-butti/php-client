@@ -18,6 +18,7 @@ use Psr\Http\Message\ResponseInterface;
 class BaseClient
 {
     const EXCEPTION_GENERIC_HTTP_ERROR = 'An HTTP Error has occurred!';
+    const DEFAULT_PER_PAGE = 25;
 
     /**
      * @var stdClass
@@ -421,6 +422,39 @@ class BaseClient
         foreach ($links as $link) {
             $this->resolvedLinks[$link['uuid']] = $link;
         }
+    }
+
+    /**
+     * Uses the `get()` method, but with included pagination handling.
+     *
+     * @return array<stdClass> array of responses
+     *
+     * @throws ApiException
+     */
+    public function getAll(string $endpointUrl, array $queryString = []): array
+    {
+        $queryString['per_page'] = $queryString['per_page'] ?? self::DEFAULT_PER_PAGE;
+        $queryString['page'] = 1;
+
+        $firstResponse = $this->get($endpointUrl, $queryString);
+        $perPage = (isset($firstResponse->httpResponseHeaders['Per-Page'][0])) ? $firstResponse->httpResponseHeaders['Per-Page'][0] : null;
+        $totalRecords = (isset($firstResponse->httpResponseHeaders['Total'][0])) ? $firstResponse->httpResponseHeaders['Total'][0] : null;
+
+        $allResponses[] = clone $firstResponse;
+
+        if (null === $perPage || null === $totalRecords || $totalRecords <= $perPage) {
+            return $allResponses;
+        }
+
+        $lastPage = (int) ceil($totalRecords / $perPage);
+
+        foreach (range(2, $lastPage) as $page) {
+            $queryString['page'] = $page;
+            $nextResponse = $this->get($endpointUrl, $queryString);
+            $allResponses[] = clone $nextResponse;
+        }
+
+        return $allResponses;
     }
 
     /**

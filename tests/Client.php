@@ -1,6 +1,6 @@
 <?php
 
-require '../vendor/autoload.php';
+require __DIR__ . '/../vendor/autoload.php';
 
 $client = new \Storyblok\Client('Iw3XKcJb6MwkdZEwoQ9BCQtt');
 
